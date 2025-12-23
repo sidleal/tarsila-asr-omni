@@ -104,6 +104,8 @@ class DataPrepCLI:
             tarsila_hf = tarsila_hf.shuffle(seed=123)
             ray_ds_stream_ = ray.data.from_huggingface(tarsila_hf)
 
+            ray_ds_stream_ = ray_ds_stream_.repartition(num_blocks=100)
+
             # Use batch-level text processing
             num_cpus = max(floor((os.cpu_count() or 1) / 4), 1)
             ray_ds_stream_ = ray_ds_stream_.map_batches(
