@@ -109,7 +109,7 @@ class DataPrepCLI:
             ray_ds_stream_ = ray_ds_stream_.map_batches(
                 TarsilaTextProcessor,
                 fn_constructor_kwargs={},
-                batch_size=1000,
+                batch_size=100,
                 batch_format="pyarrow",
                 concurrency=num_cpus,
             )
@@ -129,7 +129,7 @@ class DataPrepCLI:
                 partial(
                     map_to_target_schema,
                     split=split_renaming.get(split, split),
-                    corpus="fleurs",
+                    corpus="tarsila",
                 ),
                 batch_size=100,
                 batch_format="pyarrow",
@@ -137,7 +137,7 @@ class DataPrepCLI:
             ray_ds_stream_.write_parquet(
                 output_dir,
                 partition_cols=["corpus", "split", "language"],
-                min_rows_per_file=1_000,
+                min_rows_per_file=500,
                 row_group_size=100,  # https://github.com/ray-project/ray/issues/52481
             )
 
