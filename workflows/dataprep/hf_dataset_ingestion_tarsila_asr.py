@@ -48,6 +48,8 @@ class TarsilaTextProcessor:
             "transcription", pa.array(processed_transcriptions, type=pa.string())
         )
 
+        batch = batch.drop(['text'])
+
         language_values = ["por_Latn"] * len(batch)
         batch = batch.append_column(
             "language", pa.array(language_values, type=pa.string())
