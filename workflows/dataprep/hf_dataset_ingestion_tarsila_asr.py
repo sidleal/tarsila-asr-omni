@@ -137,7 +137,7 @@ class DataPrepCLI:
             ray_ds_stream_.write_parquet(
                 output_dir,
                 partition_cols=["corpus", "split", "language"],
-                min_rows_per_file=10_000,
+                min_rows_per_file=1_000,
                 row_group_size=100,  # https://github.com/ray-project/ray/issues/52481
             )
 
