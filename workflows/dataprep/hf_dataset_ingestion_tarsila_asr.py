@@ -101,7 +101,7 @@ class DataPrepCLI:
                 streaming=False,
                 trust_remote_code=True,
             )
-            tarsila_hf = tarsila_hf.shuffle(seed=123, buffer_size=10000)
+            tarsila_hf = tarsila_hf.shuffle(seed=123)
             ray_ds_stream_ = ray.data.from_huggingface(tarsila_hf)
 
             # Use batch-level text processing
