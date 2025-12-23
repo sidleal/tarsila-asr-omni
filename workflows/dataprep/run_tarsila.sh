@@ -1,0 +1,1 @@
+python hf_dataset_ingestion_tarsila_asr.py run /home/jovyan/data
