@@ -24,7 +24,7 @@ class TarsilaTextProcessor:
     Batch-level processor for Tarsila text data processing.
 
     Handles digit replacement, text normalization, and language mapping
-    for batches of FLEURS data.
+    for batches of Tarsila data.
     """
 
     def __init__(self):
@@ -98,7 +98,7 @@ class DataPrepCLI:
             tarsila_hf = load_dataset(
                 "sidleal/TARSILA-ASR-V1",
                 split=split,
-                streaming=True,
+                streaming=False,
                 trust_remote_code=True,
             )
             tarsila_hf = tarsila_hf.shuffle(seed=123, buffer_size=10000)
