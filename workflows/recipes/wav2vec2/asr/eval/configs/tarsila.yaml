@@ -7,7 +7,7 @@
 model:
   name: "omniASR_LLM_1B" # replace with [omniASR_CTC_1B, omniASR_CTC_3B,  omniASR_CTC_7B] or the LLM variants
 tokenizer:
-  name: "omniASR_tokenizer_v7" # replace with "omniASR_tokenizer_written_v2" if using v2 models
+  name: "omniASR_tokenizer_v1" # replace with "omniASR_tokenizer_written_v2" if using v2 models
 
 dataset:
   name: "tarsila"
