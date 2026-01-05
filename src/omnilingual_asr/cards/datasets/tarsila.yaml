@@ -1,0 +1,11 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
+name: tarsila
+dataset_family: mixture_parquet_asr_dataset
+dataset_config:
+  data: /home/jovyan/data/tarsila/version=1
+tokenizer_ref: omniASR_tokenizer_v7
