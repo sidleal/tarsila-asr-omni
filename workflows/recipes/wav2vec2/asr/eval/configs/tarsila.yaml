@@ -15,7 +15,7 @@ dataset:
   storage_mode: "MIXTURE_PARQUET"
   task_mode: "ASR"
   mixture_parquet_storage_config:
-    dataset_summary_path: "/home/jovyan/data/language_distribution_1.tsv"
+    dataset_summary_path: "/home/jovyan/data/tarsila/language_distribution_1.tsv"
     beta_corpus: 0.5
     beta_language: 0.5
     fragment_streaming:
