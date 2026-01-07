@@ -71,7 +71,7 @@ class MixtureParquetAsrDataset:
         )
 
         builder = builder.filter(
-            lambda x: x.source_seq_lens.sum() > 0 and x.target_seq_lens.sum() > 0
+            lambda x: all(l >= 1 for l in x.source_seq_lens) and all(l >= 1 for l in x.target_seq_lens)
         )
 
         pipeline = builder.and_return()
