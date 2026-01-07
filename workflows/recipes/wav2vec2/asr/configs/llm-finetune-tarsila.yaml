@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 model:
-  name: "omniASR_LLM_1B"
+  name: "omniASR_LLM_300M" #omniASR_LLM_1B
 
 dataset:
   name: "tarsila"
@@ -45,8 +45,8 @@ trainer:
     num_batches: 8
 
 regime:
-  num_steps: 20_000
+  num_steps: 5_000
   validate_after_n_steps: 0
-  validate_every_n_steps: 1
-  checkpoint_every_n_steps: 1000
+  validate_every_n_steps: 5
+  checkpoint_every_n_steps: 500
   publish_metrics_every_n_steps: 1
