@@ -69,6 +69,9 @@ class MixtureParquetAsrDataset:
         builder = task.apply_processing_pipeline(
             builder, gangs, tokenizer=tokenizer, dtype=dtype
         )
+
+        builder = builder.filter(lambda example: example['seq_lens'].sum() > 0)
+
         pipeline = builder.and_return()
 
         return DataPipelineReader[Seq2SeqBatch](
