@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 model:
-  name: "omniASR_LLM_1B" #omniASR_LLM_300M
+  name: "omniASR_LLM_300M" #omniASR_LLM_1B
 
 dataset:
   name: "tarsila"
