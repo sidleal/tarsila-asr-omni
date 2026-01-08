@@ -141,6 +141,9 @@ class WerCalculator:
                 audio_embeddings=audio_embeddings,
                 batch=batch,
             )
+            
+            #hyp_seqs_lens[hyp_seqs_lens==0] = 1
+
             hyp_seqs_layout = BatchLayout(shape=hyp_seqs.shape, seq_lens=hyp_seqs_lens)
         else:
             # greedy sampling

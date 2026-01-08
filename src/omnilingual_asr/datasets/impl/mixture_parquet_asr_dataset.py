@@ -70,9 +70,9 @@ class MixtureParquetAsrDataset:
             builder, gangs, tokenizer=tokenizer, dtype=dtype
         )
 
-        builder = builder.filter(
-            lambda x: all(l >= 1 for l in x.source_seq_lens) and all(l >= 1 for l in x.target_seq_lens)
-        )
+        #builder = builder.filter(
+        #    lambda x: all(l >= 1 for l in x.source_seq_lens) and all(l >= 1 for l in x.target_seq_lens)
+        #)
 
         pipeline = builder.and_return()
 
