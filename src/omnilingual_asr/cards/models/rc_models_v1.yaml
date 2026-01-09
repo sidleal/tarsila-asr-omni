@@ -113,3 +113,11 @@ model_family: wav2vec2_llama
 model_arch: 7b_zs
 checkpoint: https://dl.fbaipublicfiles.com/mms/omniASR-LLM-7B-ZS.pt
 tokenizer_ref: omniASR_tokenizer_v1
+
+---
+
+name: omniASR_LLM_300M_Tarsila_4k
+model_family: wav2vec2_llama
+model_arch: 300m
+checkpoint: /home/jovyan/omnilingual-asr/output/ws_1.96866555/checkpoints/step_4000/model/pp_00/tp_00/sdp_00.pt
+tokenizer_ref: omniASR_tokenizer_v1

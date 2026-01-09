@@ -1,7 +1,7 @@
 from huggingface_hub import HfApi, ModelCard, ModelCardData
 
 repo_id = "sidleal/omniASR_LLM_300M_Tarsila_4k"
-local_folder = "./output/ws_1.96866555/checkpoints/step_4000"
+local_folder = "./output/ws_1.96866555/checkpoints/step_4000/model/pp_00/tp_00"
 
 api = HfApi()
 
