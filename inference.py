@@ -19,7 +19,7 @@ from datasets import load_dataset
 def main():
     print(f"✅ PyTorch version: {torch.__version__}")
     print(f"✅ CUDA available: {torch.cuda.is_available()}")
-    
+
     # Simple dataset test
     try:
         ds = load_dataset("glue", "mrpc", split="train[:10]")
@@ -104,29 +104,103 @@ def main():
         return wer, cer
     
     
-    
 
-    
+    from fairseq2.assets import AssetCard
+
+    model_300M_4k = AssetCard("omniASR_LLM_300M_Tarsila_4k", {
+        "model_family": "wav2vec2_llama",  
+        "model_arch": "300m",   
+        "checkpoint": "file:///home/jovyan/omnilingual-asr/output/ws_1.96866555/checkpoints/step_4000/model/pp_00/tp_00/sdp_00.pt",
+        "tokenizer": "https://dl.fbaipublicfiles.com/mms/omniASR_tokenizer.model",
+        "tokenizer_family": "char_tokenizer",
+    })
+
+    model_300M_9k = AssetCard("omniASR_LLM_300M_Tarsila_9k", {
+        "model_family": "wav2vec2_llama",  
+        "model_arch": "300m",   
+        "checkpoint": "file:///home/jovyan/omnilingual-asr/output/ws_1.96866555/checkpoints/step_9000/model/pp_00/tp_00/sdp_00.pt",
+        "tokenizer": "https://dl.fbaipublicfiles.com/mms/omniASR_tokenizer.model",
+        "tokenizer_family": "char_tokenizer",
+    })
+
+    model_1B_4k = AssetCard("omniASR_LLM_1B_Tarsila_4k", {
+        "model_family": "wav2vec2_llama",  
+        "model_arch": "1b",   
+        "checkpoint": "file:///home/jovyan/omnilingual-asr/output/ws_1.0b418119/checkpoints/step_4000/model/pp_00/tp_00/sdp_00.pt",
+        "tokenizer": "https://dl.fbaipublicfiles.com/mms/omniASR_tokenizer.model",
+        "tokenizer_family": "char_tokenizer",
+    })
+
+    model_1B_9k = AssetCard("omniASR_LLM_1B_Tarsila_9k", {
+        "model_family": "wav2vec2_llama",  
+        "model_arch": "1b",   
+        "checkpoint": "file:///home/jovyan/omnilingual-asr/output/ws_1.0b418119/checkpoints/step_9000/model/pp_00/tp_00/sdp_00.pt",
+        "tokenizer": "https://dl.fbaipublicfiles.com/mms/omniASR_tokenizer.model",
+        "tokenizer_family": "char_tokenizer",
+    })
+
     device = "cuda" if torch.cuda.is_available() else "cpu"
     torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
     
     print("load model")
-    pipeline = ASRInferencePipeline(model_card="omniASR_LLM_300M_Tarsila_4k", device=device, dtype=torch_dtype)
+    pipeline1 = ASRInferencePipeline(model_card=model_300M_4k, device=device, dtype=torch_dtype)
+    pipeline2 = ASRInferencePipeline(model_card=model_300M_9k, device=device, dtype=torch_dtype)
+    pipeline3 = ASRInferencePipeline(model_card=model_1B_4k, device=device, dtype=torch_dtype)
+    pipeline4 = ASRInferencePipeline(model_card=model_1B_9k, device=device, dtype=torch_dtype)
+
+    #pipeline = ASRInferencePipeline(model_card=model_300M_4k, device=device, dtype=torch_dtype)
+    #pipeline = ASRInferencePipeline(model_card="omniASR_LLM_300M_Tarsila_4k", device=device, dtype=torch_dtype)
     #pipeline = ASRInferencePipeline(model_card="omniASR_LLM_7B", device=device, dtype=torch_dtype)
     
     print("model ok")
     
+
     def trancript_with_omni(audio_tensor):
-        audio_files = [audio_tensor]
+        import io
+        import soundfile as sf
+        import numpy as np
+        
+        sample_rate = 16000
+        
+        buf = io.BytesIO()
+        sf.write(buf, audio_array, sample_rate, format='WAV')
+        buf.seek(0)
+        raw_uint8_data = np.frombuffer(buf.read(), dtype=np.uint8)
+        
+        #audio_files = [audio_tensor]
+        audio_files = [raw_uint8_data]
         lang = ["por_Latn"]
-        transcriptions = pipeline.transcribe(audio_files, lang=lang, batch_size=1)
+
+        print(f"DEBUG: Type: {type(audio_tensor)}, Dtype: {audio_tensor.dtype}, Shape: {audio_tensor.shape}")
+
+        return [trancript_pipe_1(audio_files, lang), trancript_pipe_2(audio_files, lang), trancript_pipe_3(audio_files, lang), trancript_pipe_4(audio_files, lang)]
+
+
+    def trancript_pipe_1(audio_files, lang):
+        transcriptions = pipeline1.transcribe(audio_files, lang=lang, batch_size=1)
         return transcriptions[0]
-    
+
+    def trancript_pipe_2(audio_files, lang):
+        transcriptions = pipeline2.transcribe(audio_files, lang=lang, batch_size=1)
+        return transcriptions[0]
+
+    def trancript_pipe_3(audio_files, lang):
+        transcriptions = pipeline3.transcribe(audio_files, lang=lang, batch_size=1)
+        return transcriptions[0]
+
+    def trancript_pipe_4(audio_files, lang):
+        transcriptions = pipeline4.transcribe(audio_files, lang=lang, batch_size=1)
+        return transcriptions[0]
+
+
     def inference_and_calc_wer_cer(text_orig_norm, audio_array):
         output_asr = trancript_with_omni(audio_array)
-        output_asr_norm = replace_special_tokens_and_normalize(output_asr)
-        wer, cer = calculate_wer_cer(text_orig_norm, output_asr_norm)
-        return output_asr, output_asr_norm, wer, cer
+        ret = []
+        for it in output_asr:
+            output_asr_norm = replace_special_tokens_and_normalize(it)
+            wer, cer = calculate_wer_cer(text_orig_norm, output_asr_norm)
+            ret = ret.append([it, output_asr_norm, wer, cer])
+        return ret
     
     dataset_link = "sidleal/TARSILA-ASR-V1"
     
@@ -141,7 +215,10 @@ def main():
         writer = csv.writer(csv_file)
         csv_data = [
             "idx","origin","gender","duration","ref","ref_norm",
-            "omni_300M_4k","omni_300M_4k_norm","omni_300M_4k_wer","omni_300M_4k_cer"
+            "omni_300M_4k","omni_300M_4k_norm","omni_300M_4k_wer","omni_300M_4k_cer",
+            "omni_300M_9k","omni_300M_9k_norm","omni_300M_9k_wer","omni_300M_9k_cer",
+            "omni_1B_4k","omni_1B_4k_norm","omni_1B_4k_wer","omni_1B_4k_cer",
+            "omni_1B_9k","omni_1B_9k_norm","omni_1B_9k_wer","omni_1B_9k_cer"
         ]
         writer.writerow(csv_data)
     
@@ -157,16 +234,23 @@ def main():
             text_orig = item["text"]
             text_orig_norm = replace_special_tokens_and_normalize(text_orig)
     
-            try:
-                output_asr_1, output_asr_norm_1, wer_1, cer_1 = inference_and_calc_wer_cer(text_orig_norm, audio_array)
-        
-                csv_data = [
-                    i, item["origin"], item["gender"][0], item["duration"], text_orig, text_orig_norm,
-                    output_asr_1, output_asr_norm_1, wer_1, cer_1
-                ]
-                writer.writerow(csv_data)
-            except Exception as e:
-                print(e)
+            #try:
+            ret_asr = inference_and_calc_wer_cer(text_orig_norm, audio_array)
+            output_asr_1, output_asr_norm_1, wer_1, cer_1 = ret_asr[0]
+            output_asr_2, output_asr_norm_2, wer_2, cer_2 = ret_asr[1]
+            output_asr_3, output_asr_norm_3, wer_3, cer_3 = ret_asr[2]
+            output_asr_4, output_asr_norm_4, wer_4, cer_4 = ret_asr[3]
+                
+            csv_data = [
+                i, item["origin"], item["gender"][0], item["duration"], text_orig, text_orig_norm,
+                output_asr_1, output_asr_norm_1, wer_1, cer_1,
+                output_asr_2, output_asr_norm_2, wer_2, cer_2,
+                output_asr_3, output_asr_norm_3, wer_3, cer_3,
+                output_asr_4, output_asr_norm_4, wer_4, cer_4,
+            ]
+            writer.writerow(csv_data)
+            #except Exception as e:
+            #    print(e)
             
             i+=1
 
