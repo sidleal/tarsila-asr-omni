@@ -148,11 +148,7 @@ def main():
     pipeline3 = ASRInferencePipeline(model_card=model_1B_4k, device=device, dtype=torch_dtype)
     pipeline4 = ASRInferencePipeline(model_card=model_1B_9k, device=device, dtype=torch_dtype)
 
-    #pipeline = ASRInferencePipeline(model_card=model_300M_4k, device=device, dtype=torch_dtype)
-    #pipeline = ASRInferencePipeline(model_card="omniASR_LLM_300M_Tarsila_4k", device=device, dtype=torch_dtype)
-    #pipeline = ASRInferencePipeline(model_card="omniASR_LLM_7B", device=device, dtype=torch_dtype)
-    
-    print("model ok")
+    print("models ok")
     
 
     def trancript_with_omni(audio_tensor):
@@ -167,11 +163,8 @@ def main():
         buf.seek(0)
         raw_uint8_data = np.frombuffer(buf.read(), dtype=np.uint8)
         
-        #audio_files = [audio_tensor]
         audio_files = [raw_uint8_data]
         lang = ["por_Latn"]
-
-        print(f"DEBUG: Type: {type(audio_tensor)}, Dtype: {audio_tensor.dtype}, Shape: {audio_tensor.shape}")
 
         return [trancript_pipe_1(audio_files, lang), trancript_pipe_2(audio_files, lang), trancript_pipe_3(audio_files, lang), trancript_pipe_4(audio_files, lang)]
 
@@ -199,7 +192,7 @@ def main():
         for it in output_asr:
             output_asr_norm = replace_special_tokens_and_normalize(it)
             wer, cer = calculate_wer_cer(text_orig_norm, output_asr_norm)
-            ret = ret.append([it, output_asr_norm, wer, cer])
+            ret.append([it, output_asr_norm, wer, cer])
         return ret
     
     dataset_link = "sidleal/TARSILA-ASR-V1"
